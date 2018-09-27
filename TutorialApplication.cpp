@@ -6,9 +6,9 @@
 //
 // Date: 2018/09/20
 ////////////////////////////////////////
-// Student Name:
-// Student ID:
-// Student Email:
+// Student Name: ¶À«Ø³ó
+// Student ID: 0656651
+// Student Email: hk850522@gmail.com
 //
 ////////////////////////////////////////
 // You can delete or add some functions to do the assignment.
@@ -21,12 +21,23 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <Windows.h>
 
 using namespace Ogre;
 
 const float PI = 3.141592654;
 
-BasicTutorial_00::BasicTutorial_00(void) {}
+BasicTutorial_00::BasicTutorial_00(void) 
+{
+	playAnim = false;
+	isUpward = true;
+	max_height = 280.0;
+	min_height = 0.0;
+	max_velo = 80.0;
+	velocity = Ogre::Vector3::ZERO;
+	up_acc = Ogre::Vector3(0.0, 20.8, 0.0);
+	down_acc = Ogre::Vector3(0.0, -50.8, 0.0);
+}
 
 void BasicTutorial_00::chooseSceneManager()
 {
@@ -37,6 +48,7 @@ void BasicTutorial_00::chooseSceneManager()
     //
     // add your own stuff
     //
+
 }
 
 void BasicTutorial_00::createCamera_00(void)
@@ -65,7 +77,7 @@ void BasicTutorial_00::createViewport_00(void)
 {
 	mCamera = mCameraArr[0];
 	Viewport* vp = mWindow->addViewport(mCamera);
-	vp->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
+	vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0.7));
 
 	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 	mViewportArr[0] = vp;
@@ -79,7 +91,7 @@ void BasicTutorial_00::createViewport_01(void)
 	//float Width = 0.25, Height = 0.25;
 
 	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-	vp->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
+	vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0.7));
 	vp->setOverlaysEnabled(false);
 	mViewportArr[1] = vp;
 	//mCamera = mCameraArr[0];
@@ -195,7 +207,7 @@ void BasicTutorial_00::createScene_01(void)
 {
     // add your own stuff
 	mSceneMgr = mSceneMgrArr[1];
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.7, 0.7, 0.7));
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0, 0, 0));
 	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	Light *light = mSceneMgr->createLight();
@@ -420,7 +432,8 @@ bool BasicTutorial_00::keyPressed( const OIS::KeyEvent &arg )
     }
 
 	if (arg.key == OIS::KC_0) {
-		
+		playAnim = !playAnim;
+		//time_step = 0.0;
 	}
 
     // Do not delete this line
@@ -488,10 +501,36 @@ void BasicTutorial_00::changeViewport()
 bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 {
 	bool flg = Ogre::FrameListener::frameStarted(evt);
-    //
-    // add your own stuff
-    //
-	printf("%d", flg);
+
+	// Update Penguin
+	if (playAnim) {
+		mSceneMgr = mSceneMgrArr[0];
+		SceneNode *snode = mSceneMgr->getSceneNode("PenguinNode01");
+		Ogre::Vector3 pos = snode->getPosition();
+		float now_time = GetTickCount();
+		if (isUpward) {
+			velocity += up_acc * evt.timeSinceLastFrame;
+		}
+		else {
+			velocity += down_acc * evt.timeSinceLastFrame;
+		}
+
+		velocity.y = std::max(std::min(velocity.y, max_velo), -max_velo);
+		pos += velocity * evt.timeSinceLastFrame;
+		if (pos.y > max_height || pos.y < min_height) {
+			pos.y = std::min(std::max(pos.y, min_height), max_height);
+			velocity = Ogre::Vector3::ZERO;
+			isUpward = !isUpward;
+		}
+		//if (pos.y < min_height) {
+		//	pos.y = min_height;
+		//	velocity = Ogre::Vector3::ZERO;
+		//	isUpward = true;
+		//}
+		snode->setPosition(pos);
+		//time_step = now_time;
+	}
+	
     return flg;
 }
 int main(int argc, char *argv[]) {

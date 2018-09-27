@@ -6,11 +6,11 @@
 /*!
 \brief 3D Game Programming
 \n
-My Name: AA BB CC
+My Name: Chien-Yao Huang
 \n
-My ID: 0123456789
+My ID: 0656651
 \n
-My Email: aaa@cs.nctu.edu.tw
+My Email: hk850522@gmail.com
 \n Date: 2018/09/20
 
 This is an assignment of 3D Game Programming
@@ -46,15 +46,49 @@ protected:
 
 	Create a viewport for the entire screen.
 
-	\return The sum of two integers.
+	\return None.
 	*/
 	void createViewport_00(void);
+	/*!
+	\brief Create a viewport
+
+	Create a viewport for the screen that is on the corner.
+
+	\return None.
+	*/
 	void createViewport_01(void);
-	//
+	/*!
+	\brief Create a camera
+
+	Create a camera for the main screen.
+
+	\return None.
+	*/
 	void createCamera_00();
+	/*!
+	\brief Create a camera
+
+	Create a camera for the second screen.
+
+	\return None.
+	*/
 	void createCamera_01();
 
+	/*!
+	\brief Create the main scene.
+
+	In this scene, it contains two penguins and several cubes which is arranged in particular shape
+
+	\return None.
+	*/
 	void createScene_00();
+	/*!
+	\brief Create the second scene.
+
+	In this scene, it contains a sphere
+
+	\return None.
+	*/
 	void createScene_01();
     bool keyPressed( const OIS::KeyEvent &arg );
     bool keyReleased( const OIS::KeyEvent &arg );
@@ -62,6 +96,8 @@ protected:
     // Add your own stuff.
     //
 	void changeViewport();
+	
+	
 protected:
     Ogre::Viewport* mViewportArr[8];
 	Ogre::Camera* mCameraArr[8];
@@ -70,6 +106,14 @@ protected:
     //
     // Add your own stuff.
     //
+	bool playAnim;
+	bool isUpward;
+	float max_height;
+	float min_height;
+	float max_velo;
+	Ogre::Vector3 velocity;
+	Ogre::Vector3 up_acc;
+	Ogre::Vector3 down_acc;
 };
 
 
