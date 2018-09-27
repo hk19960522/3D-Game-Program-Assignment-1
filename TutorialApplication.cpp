@@ -52,9 +52,13 @@ void BasicTutorial_00::createCamera_00(void)
 void BasicTutorial_00::createCamera_01(void)
 {
 	// add your own stuff
-
+	mSceneMgr = mSceneMgrArr[1];
+	mCamera = mCameraArr[1] = mSceneMgr->createCamera("LittleCam");
+	mCamera->setPosition(Ogre::Vector3(0,350,0.001));
+	mCamera->lookAt(Ogre::Vector3(0,0,0));
+	mCamera->setNearClipDistance(5);
+	mCamera = mCameraArr[0];
 }
-
 
 
 void BasicTutorial_00::createViewport_00(void)
@@ -68,6 +72,15 @@ void BasicTutorial_00::createViewport_00(void)
 void BasicTutorial_00::createViewport_01(void)
 {
     // add your own stuff
+	mCamera = mCameraArr[1];
+	Viewport* vp = mWindow->addViewport(mCamera, 1, 0, 0, 0.25, 0.25);
+	//float Width = 0.25, Height = 0.25;
+
+	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+	vp->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
+	vp->setOverlaysEnabled(false);
+	mCamera = mCameraArr[0];
+	
 }
 
 void BasicTutorial_00::createScene_00(void) 
@@ -180,7 +193,34 @@ void BasicTutorial_00::createScene_01(void)
 {
     // add your own stuff
 	mSceneMgr = mSceneMgrArr[1];
+	mSceneMgr->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
 
+	Light *light = mSceneMgr->createLight();
+	light->setType(Light::LT_POINT); 
+	light->setPosition(Vector3(100, 150, 250)); 
+	light->setDiffuseColour(0.0, 0.0, 1.0);	
+	light->setSpecularColour(0.0,0.0, 1.0);	 
+	
+	Plane plane(Vector3::UNIT_Y, 0); 
+	MeshManager::getSingleton().createPlane(
+	"ground01", 										
+	ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+			plane, 
+			1000,1000, 	// width, height
+			20,20, 		// x- and y-segments
+			true, 		// normal
+			1, 			// num texture sets
+			5,5, 		// x- and y-tiles
+			Vector3::UNIT_Z	// upward vector
+		);
+	Entity *ent = mSceneMgr->createEntity("GroundEntity", "ground01");
+	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(ent);
+
+	ent = mSceneMgr->createEntity("Sphere", "sphere.mesh");
+	SceneNode *snode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	snode->setPosition(0, 20, 0);
+	snode->scale(1, 2, 3);
+	snode->attachObject(ent);
 }
 
 void BasicTutorial_00::createViewports(void)

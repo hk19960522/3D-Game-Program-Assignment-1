@@ -60,7 +60,7 @@ bool BaseApplication::configure(void)
     {
         // If returned true, user clicked OK so initialise
         // Here we choose to let the system create a default rendering window by passing 'true'
-        mWindow = mRoot->initialise(true, "NCTU. 3D Game Programming. Student Name: XYZ. ID:0123456789");
+        mWindow = mRoot->initialise(true, "NCTU. 3D Game Programming. Student Name: ¶À«Ø³ó. ID:0656651");
 
         return true;
     }
@@ -87,7 +87,6 @@ void BaseApplication::createCamera(void)
     // Look back along -Z
     mCamera->lookAt(Ogre::Vector3(0,0,-300));
 	*/
-
 	
     mCamera->setPosition(Ogre::Vector3(0,80,1000));
     mCamera->lookAt(Ogre::Vector3(0,0,0));
