@@ -63,10 +63,12 @@ void BasicTutorial_00::createCamera_01(void)
 
 void BasicTutorial_00::createViewport_00(void)
 {
+	mCamera = mCameraArr[0];
 	Viewport* vp = mWindow->addViewport(mCamera);
 	vp->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
 
 	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+	mViewportArr[0] = vp;
 }
 
 void BasicTutorial_00::createViewport_01(void)
@@ -79,8 +81,8 @@ void BasicTutorial_00::createViewport_01(void)
 	mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 	vp->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
 	vp->setOverlaysEnabled(false);
-	mCamera = mCameraArr[0];
-	
+	mViewportArr[1] = vp;
+	//mCamera = mCameraArr[0];
 }
 
 void BasicTutorial_00::createScene_00(void) 
@@ -193,7 +195,8 @@ void BasicTutorial_00::createScene_01(void)
 {
     // add your own stuff
 	mSceneMgr = mSceneMgrArr[1];
-	mSceneMgr->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.7, 0.7, 0.7));
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	Light *light = mSceneMgr->createLight();
 	light->setType(Light::LT_POINT); 
@@ -213,13 +216,14 @@ void BasicTutorial_00::createScene_01(void)
 			5,5, 		// x- and y-tiles
 			Vector3::UNIT_Z	// upward vector
 		);
-	Entity *ent = mSceneMgr->createEntity("GroundEntity", "ground01");
+	Entity *ent = mSceneMgr->createEntity("GroundEntity", "ground");
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(ent);
 
 	ent = mSceneMgr->createEntity("Sphere", "sphere.mesh");
+	ent->setMaterialName("Examples/green");
 	SceneNode *snode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	snode->setPosition(0, 20, 0);
-	snode->scale(1, 2, 3);
+	snode->setPosition(0, 1, 0);
+	snode->scale(1.2, 0.7, 0.2);
 	snode->attachObject(ent);
 }
 
@@ -307,9 +311,9 @@ bool BasicTutorial_00::keyPressed( const OIS::KeyEvent &arg )
 
     if (arg.key == OIS::KC_1 ) {
         mCameraMan->getCamera()
-            ->setPosition(Vector3(98.14,	450.69,	964.20));
+            ->setPosition(Ogre::Vector3(98.14, 450.69, 964.20));
         mCameraMan->getCamera()
-            ->setDirection(Vector3(-0.01,	-0.30,	-0.95));
+            ->setDirection(Ogre::Vector3(-0.01, -0.30, -0.95));
 
         //98.14	450.69	964.20
         //-0.01	-0.30	-0.95
@@ -319,49 +323,105 @@ bool BasicTutorial_00::keyPressed( const OIS::KeyEvent &arg )
         // add your own stuff
         //-1463.00	606.45	-513.24
         //0.88	-0.47	0.10
+		mCameraMan->getCamera()
+            ->setPosition(Ogre::Vector3(-1463.00, 606.45, -513.24));
+        mCameraMan->getCamera()
+            ->setDirection(Ogre::Vector3(0.88, -0.47, 0.10));
     }
 
     if (arg.key == OIS::KC_3 ) {
         // add your own stuff
         //-1356.16	634.32	-964.51
         //0.71	-0.44	0.55
+		mCameraMan->getCamera()
+            ->setPosition(Ogre::Vector3(-1356.16, 634.32, -964.51));
+        mCameraMan->getCamera()
+            ->setDirection(Ogre::Vector3(0.71, -0.44, 0.55));
     }
 
     if (arg.key == OIS::KC_4 ) {
          // add your own stuff
         //40.39	155.23	251.20
         //-0.02	-0.41	-0.91
+		mCameraMan->getCamera()
+            ->setPosition(Ogre::Vector3(40.39, 155.23, 251.20));
+        mCameraMan->getCamera()
+            ->setDirection(Ogre::Vector3(-0.02, -0.41, -0.91));
     }
 
     if (arg.key == OIS::KC_5 ) {
         // add your own stuff
         //19.94	822.63	30.79
         //0.00	-0.99	-0.11
+		mCameraMan->getCamera()
+			->setPosition(Ogre::Vector3(19.94, 822.63, 30.79));
+		mCameraMan->getCamera()
+			->setDirection(Ogre::Vector3(0.00, -0.99, -0.11));
     }
 
     if (arg.key == OIS::KC_M ) {
-        
-       Camera *c_ptr = mCameraArr[0];
-       mWindow->removeViewport(mViewportArr[0]->getZOrder());
-	Ogre::Viewport* vp = mWindow->addViewport(
-        c_ptr,
-        0,
-        0.15,
-        0.55,
-        0.45,
-        0.3
-        );
-	vp->setBackgroundColour(Ogre::ColourValue(0,0.5,0.0));
-	c_ptr->setAspectRatio(
-		Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-   //delete mViewportArr[0];    // program crashes
-    mViewportArr[0] = vp;       // make sure to save the new pointer
-    
+		
+		Camera *c_ptr = mCameraArr[0];
+		mWindow->removeViewport(mViewportArr[0]->getZOrder());
+		mWindow->removeViewport(mViewportArr[1]->getZOrder());
+		Ogre::Viewport* vp = mWindow->addViewport(
+			c_ptr,
+			1,
+			0.0,
+			0.0,
+			0.45,
+			0.3
+			);
+		vp->setBackgroundColour(Ogre::ColourValue(0,0.5,0.0));
+		c_ptr->setAspectRatio(
+			Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+		mViewportArr[0] = vp;       // make sure to save the new pointer
+
+		c_ptr = mCameraArr[1];
+		vp = mWindow->addViewport(
+			c_ptr,
+			0
+			);
+		vp->setBackgroundColour(Ogre::ColourValue(0,0.5,0.0));
+		c_ptr->setAspectRatio(
+			Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+		vp->setOverlaysEnabled(false);
+		mViewportArr[1] = vp;  
+		//changeViewport();
     }
 
     if (arg.key == OIS::KC_N ) {
-        // add your own stuff
+        Camera *c_ptr = mCameraArr[0];
+		mWindow->removeViewport(mViewportArr[0]->getZOrder());
+		mWindow->removeViewport(mViewportArr[1]->getZOrder());
+		Ogre::Viewport* vp = mWindow->addViewport(
+			c_ptr,
+			0
+			);
+		vp->setBackgroundColour(Ogre::ColourValue(0,0.5,0.0));
+		c_ptr->setAspectRatio(
+			Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+		mViewportArr[0] = vp;       // make sure to save the new pointer
+
+		c_ptr = mCameraArr[1];
+		vp = mWindow->addViewport(
+			c_ptr,
+			1, 
+			0.6,
+			0.5,
+			0.4,
+			0.3
+			);
+		vp->setBackgroundColour(Ogre::ColourValue(0,0.5,0.0));
+		c_ptr->setAspectRatio(
+			Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+		vp->setOverlaysEnabled(false);
+		mViewportArr[1] = vp; 
     }
+
+	if (arg.key == OIS::KC_0) {
+		
+	}
 
     // Do not delete this line
     BaseApplication::keyPressed(arg);
@@ -392,12 +452,46 @@ bool BasicTutorial_00::keyReleased( const OIS::KeyEvent &arg )
     return flg;
 }
 
+void BasicTutorial_00::changeViewport()
+{
+	int order[2];
+	float position[2][4];
+	Ogre::ColourValue color[2];
+	for (int i=0;i<2;i++) {
+		order[i] = mViewportArr[i]->getZOrder();
+		position[i][0] = mViewportArr[i]->getLeft();
+		position[i][1] = mViewportArr[i]->getTop();
+		position[i][2] = mViewportArr[i]->getWidth();
+		position[i][3] = mViewportArr[i]->getHeight();
+		color[i] = mViewportArr[i]->getBackgroundColour();
+		mWindow->removeViewport(mViewportArr[i]->getZOrder());
+	}
+	
+	for (int i=0;i<2;i++) {
+		int j = 2-i-1;
+		mCamera = mCameraArr[i];
+		Viewport *vp = mWindow->addViewport(
+			mCamera, order[j], 
+			position[j][0], position[j][1], position[j][2], position[j][3]
+			);
+		mCamera->setAspectRatio(
+			Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()) );
+		vp->setBackgroundColour(color[j]);
+		mViewportArr[i] = vp;
+		if (order[j] > order[i]) {
+			vp->setOverlaysEnabled(false);
+		}
+	}
+
+}
+
 bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 {
 	bool flg = Ogre::FrameListener::frameStarted(evt);
     //
     // add your own stuff
     //
+	printf("%d", flg);
     return flg;
 }
 int main(int argc, char *argv[]) {

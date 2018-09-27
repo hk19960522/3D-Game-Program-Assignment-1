@@ -61,6 +61,7 @@ protected:
     //
     // Add your own stuff.
     //
+	void changeViewport();
 protected:
     Ogre::Viewport* mViewportArr[8];
 	Ogre::Camera* mCameraArr[8];
